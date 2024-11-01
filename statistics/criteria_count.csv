@@ -1,0 +1,13 @@
+Criterion,0,1,2
+device_known_hardware_tampering,145,90,17
+device_known_vulnerabilties,59,133,60
+device_prior_attacks,89,117,46
+device_updatability,148,51,53
+system_authentication_with_other_systems,142,77,33
+system_communications,171,38,43
+system_storage,142,26,84
+user_authentication_account_management,148,68,36
+user_authentication_authentication,141,81,30
+user_authentication_brute_force_protection,129,72,51
+user_authentication_event_logging,120,69,63
+user_authentication_passwords,105,59,88
