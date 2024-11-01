@@ -59,5 +59,71 @@ def get_grade_distribution():
     write_csv("statistics/grade_distribution.csv", ["Grade", "Count"], data)
 
 
+def get_criteria_count():
+    criteria = (
+        ("device_known_hardware_tampering", "None", "Rare", "Very+common"),
+        ("device_known_vulnerabilties", "None", "Rare", "Very+common"),
+        ("device_prior_attacks", "None", "Rare", "Very+common"),
+        ("device_updatability", "Very+common", "Rare", "None"),
+        ("system_authentication_with_other_systems", "Full", "Partial", "No"),
+        (
+            "system_communications",
+            "Encrypted+with+up-to-date+encryption",
+            "Encrypted+with+obselete+encryption",
+            "No+encryption",
+        ),
+        (
+            "system_storage",
+            "Encrypted+with+up-to-date+encryption",
+            "Encrypted+with+obselete+encryption",
+            "No+encryption",
+        ),
+        ("user_authentication_account_management", "Full", "Basic", "Absent"),
+        ("user_authentication_authentication", "Secure", "Basic", "Absent"),
+        ("user_authentication_brute_force_protection", "Exist", "Basic", "Absent"),
+        (
+            "user_authentication_event_logging",
+            "Access+event+logged",
+            "Partial+logging",
+            "Absent",
+        ),
+        (
+            "user_authentication_passwords",
+            "Require+change+after+setup+with+complexity+requirements",
+            "Require+change+after+setup",
+            "Default%2FCommon%2FEasy+to+guess",
+        ),
+    )
+
+    data = []
+    for criterion, *values in criteria:
+
+        rows = [criterion]
+        for value in values:
+            text_data = get_html_text_data(
+                f"?search=%22{criterion}%3D{value}%22&title=Special%3ASearch&profile=default&fulltext=1"
+            )
+            soup = BeautifulSoup(text_data, "html.parser")
+            results_info_div = soup.find("div", class_="results-info")
+            total_results = (
+                results_info_div["data-mw-num-results-total"]
+                if results_info_div
+                else None
+            )
+
+            if (
+                criterion == "user_authentication_passwords"
+                and value == "Require+change+after+setup"
+            ):
+                total_results = str(eval(f"{total_results} - {rows[-1]}"))
+
+            rows.append(total_results)
+
+        data.append(rows)
+
+    write_csv("statistics/criteria_count.csv", ["Criterion", "0", "1", "2"], data)
+
+
 get_total_pages()
 get_grade_distribution()
+get_criteria_count()
